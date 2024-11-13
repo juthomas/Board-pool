@@ -308,7 +308,7 @@ void handleSerialCommands() {
                 Serial.println("mode aht - AHT20 temperature mode");
                 #endif
                 Serial.print("\nCurrent input: ");
-                Serial.println(currentCommand);
+                Serial.print(currentCommand);
             }
         }
     }
