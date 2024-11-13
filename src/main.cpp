@@ -225,10 +225,98 @@ void set_number(uint32_t v) {
 	digits[2] = DIGIT_3 | (segs[v / 10 % 10] ) | (1 << LEDS_D09) | (1 << LEDS_D10) | (1 << LEDS_D11);
 	digits[3] = DIGIT_4 | (segs[v % 10] );
 }
+void handleSerialCommands() {
+    static String currentCommand = "";
+    
+    while (Serial.available()) {
+        char c = Serial.read();
+        if (c == '\n') {
+            // Process complete command
+            currentCommand.trim();
+            
+            if (currentCommand.startsWith("mode ")) {
+                String modeStr = currentCommand.substring(5);
+                if (modeStr == "ctn") {
+                    mode = MODE_CTN;
+                    Serial.println("Mode set to counter");
+                }
+                else if (modeStr == "time") {
+                    mode = MODE_TIME; 
+                    Serial.println("Mode set to time display");
+                }
+                else if (modeStr == "pot") {
+                    mode = MODE_POT;
+                    Serial.println("Mode set to potentiometer reading");
+                }
+                else if (modeStr == "ldr") {
+                    mode = MODE_LDR;
+                    Serial.println("Mode set to light sensor reading");
+                }
+                else if (modeStr == "ntc") {
+                    mode = MODE_NTC;
+                    Serial.println("Mode set to temperature sensor reading");
+                }
+                #ifdef USE_AHT20
+                else if (modeStr == "aht") {
+                    mode = MODE_AHT20_TEMP;
+                    Serial.println("Mode set to AHT20 temperature");
+                }
+                #endif
+                else {
+                    Serial.println("Unknown mode");
+                }
+            }
+            else if (currentCommand == "help") {
+                Serial.println("Available commands:");
+                Serial.println("mode ctn - Counter mode");
+                Serial.println("mode time - Time display mode");
+                Serial.println("mode pot - Potentiometer reading mode");
+                Serial.println("mode ldr - Light sensor reading mode");
+                Serial.println("mode ntc - Temperature sensor reading mode");
+                #ifdef USE_AHT20
+                Serial.println("mode aht - AHT20 temperature mode");
+                #endif
+            }
+            else {
+                Serial.println(currentCommand);
+                Serial.println("Unknown command. Type 'help' for available commands.");
+            }
+            
+            currentCommand = ""; // Reset command buffer
+        }
+        else {
+        if (c == '\b' || c == 127) { // Backspace or Delete key
+            // Serial.println("Backspace or Delete key pressed");
+            if (currentCommand.length() > 0) {
+                currentCommand.remove(currentCommand.length() - 1);
+                // Serial.print("\b \b"); // Efface le dernier caractère sur le terminal
+            }
+        }
+        else {
+                currentCommand += c;
+            }
+            // Echo character and show help on any key press
+            Serial.print(c);
+            if (c != ' ' && c != '\r') { // Don't show help on space or carriage return
+                Serial.println("\nAvailable commands:");
+                Serial.println("mode ctn - Counter mode");
+                Serial.println("mode time - Time display mode"); 
+                Serial.println("mode pot - Potentiometer reading mode");
+                Serial.println("mode ldr - Light sensor reading mode");
+                Serial.println("mode ntc - Temperature sensor reading mode");
+                #ifdef USE_AHT20
+                Serial.println("mode aht - AHT20 temperature mode");
+                #endif
+                Serial.print("\nCurrent input: ");
+                Serial.println(currentCommand);
+            }
+        }
+    }
+}
 
 void loop() {
 	// check APA102
-
+handleSerialCommands();
 	struct pixel p = Wheel(i+0);
 	strip.setPixelColor(0, p.r * bright / 255, p.g * bright / 255, p.b * bright / 255);
 	p = Wheel(i+30);
