@@ -1,0 +1,15 @@
+[submodule "lib/Adafruit_DotStar"]
+	path = lib/Adafruit_DotStar
+	url = git@github.com:adafruit/Adafruit_DotStar.git
+[submodule "lib/Adafruit_AHTX0"]
+	path = lib/Adafruit_AHTX0
+	url = git@github.com:adafruit/Adafruit_AHTX0.git
+[submodule "lib/RTClib"]
+	path = lib/RTClib
+	url = git@github.com:adafruit/RTClib.git
+[submodule "lib/PCA95x5"]
+	path = lib/PCA95x5
+	url = git@github.com:hideakitai/PCA95x5.git
+[submodule "lib/Adafruit_BusIO"]
+	path = lib/Adafruit_BusIO
+	url = git@github.com:adafruit/Adafruit_BusIO.git
